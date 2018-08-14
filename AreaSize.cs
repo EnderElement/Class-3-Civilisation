@@ -5,7 +5,12 @@ using UnityEngine;
 public class AreaSize : MonoBehaviour {
     
     public static float radius;
-    //public static List<Transform> nodeInRadius = new List<Transform>();
+	//public static List<Transform> nodeInRadius = new List<Transform>();
+
+	private void Start()
+	{
+        //DontDestroyOnLoad(gameObject);
+	}
 
 	void Update () {
         radius = Mathf.Lerp(radius,GameController.reach,0.2f);

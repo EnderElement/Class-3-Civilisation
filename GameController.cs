@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Analytics;
 
 public class GameController : MonoBehaviour {
 
@@ -29,7 +30,23 @@ public class GameController : MonoBehaviour {
     private int i;
     private float prevR;
     private int civSize;
-    private float totalLength;
+    public static float totalLength;
+    private AnalyticsEventTracker eventTracker;
+    public static bool endGame;
+
+	private void Awake()
+	{
+        //DontDestroyOnLoad(home.gameObject);
+        //DontDestroyOnLoad(distText.gameObject);
+        //DontDestroyOnLoad(endScreen);
+        //foreach (Transform node in NodeGeneration.nodeList)
+        //{
+        //    DontDestroyOnLoad(node.gameObject);
+        //    float dist = Vector3.Distance(home.position, node.position);
+        //    distList.Add(dist, node);
+        //    distListKeys.Add(dist, dist);
+        //}
+	}
 
 	void Start () {
         currentSystem = home;
@@ -39,14 +56,17 @@ public class GameController : MonoBehaviour {
         faketime = 0;
         i = 1;
         traverse = false;
-        line = GetComponent<LineRenderer>();
-        distText.GetComponent<Text>();
+        endGame = false;
         foreach (Transform node in NodeGeneration.nodeList)
-        {
-            float dist = Vector3.Distance(home.position, node.position);
-            distList.Add(dist,node);
-            distListKeys.Add(dist, dist);
-        }
+            {
+                float dist = Vector3.Distance(home.position, node.position);
+                distList.Add(dist, node);
+                distListKeys.Add(dist, dist);
+            }
+        line = GetComponent<LineRenderer>();
+        eventTracker = GetComponent<AnalyticsEventTracker>();
+        eventTracker.name = "TotalDistance";
+        distText.GetComponent<Text>();
         distText.text = "Network Distance: 0ly";
 	}
 
@@ -59,22 +79,29 @@ public class GameController : MonoBehaviour {
             {
                 nodeInRadius.Add(node);
                 node.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+                node.GetChild(0).GetComponent<Klak.Motion.ConstantMotion>().rotationSpeed = 20f;
             }
         }
         //prevR = R;
         //AreaExpansion();
         ObjectClick();
         GameArea();
-        if (claimedSystems.Count >= NodeGeneration.nodeList.Count+1) {
+        if (claimedSystems.Count >= NodeGeneration.nodeList.Count) {
+            if (!endGame)
+            {
+                ReportFinalDist(totalLength);
+            }
+            //eventTracker.TriggerEvent();
             distText.text = "";
             scoreText.text = "Final Network Distance: " + Convert.ToString(Mathf.Round(totalLength))+"ly";
             endScreen.SetActive(true);
-            Debug.Log("End game");
+            endGame = true;
+            //Debug.Log("End game");
         }
         //Debug.Log(Time.fixedTime);
         //Debug.Log(nodeInRadius.Count);
-        Debug.Log(claimedSystems.Count);
-        Debug.Log(NodeGeneration.nodeList.Count+1);
+        //Debug.Log(claimedSystems.Count);
+        //Debug.Log(NodeGeneration.nodeList.Count);
 	}
 
     void ObjectClick() {
@@ -134,12 +161,19 @@ public class GameController : MonoBehaviour {
     }
 
     public void QuitGame() {
-        Debug.Log("Quit");
         Application.Quit();
     }
 
     public void RestartGame() {
-        Debug.Log("Restart");
         SceneManager.LoadScene("Universe");
+    }
+
+    public void ReportFinalDist (float finaldist) {
+        AnalyticsEvent.Custom("FinalDist", new Dictionary<string, object>
+        {
+            { "totalLength", finaldist },
+            { "time_elapsed", Time.timeSinceLevelLoad }
+        });
+        Debug.Log("exported score");
     }
 }

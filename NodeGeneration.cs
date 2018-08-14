@@ -8,13 +8,18 @@ public class NodeGeneration : MonoBehaviour {
     public int separation = 1;
 	public int maxIter = 100;
     public static List<Transform> nodeList = new List<Transform>();
-    //private int maxIter;
+	//private int maxIter;
 
 	//private void Awake()
 	//{
-            //maxIter = GameController.maxIter;
+	//maxIter = GameController.maxIter;
 
-    //}
+	//}
+
+	private void Start()
+	{
+        //DontDestroyOnLoad(gameObject);
+	}
 
 	void Awake () {
         for (int i = 1; i < maxIter; i++) {
