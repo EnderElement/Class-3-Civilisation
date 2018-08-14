@@ -3,4 +3,5 @@
 
 ##### You first start with the primary solar system and hover your mouse over another system that is nearby to add it to your collection. You can only claim the systems that are inside the radius of the outer most system before claiming outside. To win simply connect every single star system keeping in mind that it is best for the network to be as short as possible.
 
-[Download Game Here](https://ldjam.com/events/ludum-dare/42/class-3-civilisation "Ludum Dare page")
+**[Download Game Here](https://ldjam.com/events/ludum-dare/42/class-3-civilisation "Ludum Dare page")**.
+I will soon post a video of the game on my channel **[here](https://www.youtube.com/enderelemental)**.
